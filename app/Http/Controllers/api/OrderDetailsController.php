@@ -11,7 +11,7 @@ class OrderDetailsController extends Controller
     public function getOrders()
     {
         // Recupere os dados do banco de dados
-        $orders = Order::with(['customer', 'orderItems', 'deliveryAddress'])->get();
+        $orders = Order::with(['customer', 'orderItems', 'deliveryAddress', 'orderEvents'])->get();
 
         // Retorne os dados como JSON
         return response()->json(['orders' => $orders]);

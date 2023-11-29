@@ -11,6 +11,7 @@
                         <th scope="col">Nº Pedido</th>
                         <th scope="col">Feito em</th>
                         <th scope="col">Tipo de Pedido</th>
+                        <th scope="col">Status</th>
                         <th class="text-center" scope="col">Detalhar</th>
                     </tr>
                 </thead>
@@ -21,10 +22,10 @@
                             <td>{{ Carbon\Carbon::parse($order->order_created_at)->format('d/m/Y') }} as
                                 {{ Carbon\Carbon::parse($order->order_created_at)->format('H:i:s') }}</td>
                             <td>{{ $order->order_type }}</td>
+                            <td>{{ $order->orderEvents->first()->full_code ? 'Novo pedido na plataforma' : '' }} </td>
                             <td class="text-center">
-                                <a href="#" data-toggle="modal"
-                                    data-target="#orderModal{{ $order->id }}">
-                                    <x-carbon-view style="width: 24px; height: 24px; color: #000"/>
+                                <a href="#" data-toggle="modal" data-target="#orderModal{{ $order->id }}">
+                                    <x-carbon-view style="width: 24px; height: 24px; color: #000" />
                                 </a>
                             </td>
                         </tr>

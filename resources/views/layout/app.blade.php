@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap 5 Simple Admin Dashboard</title>
+    <title>Next Order</title>
     <!-- insert stylesheets here -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
         @vite(['resources/css/style.css', 'resources/js/app.js'])
@@ -24,7 +24,7 @@
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                     data-toggle="dropdown" aria-expanded="false">
-                    Hello, Fábio       
+                    Hello, Fábio
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <li><a class="dropdown-item" href="#">Settings</a></li>
@@ -52,7 +52,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="/configuracoes">
                                 <x-iconpark-config  width="24" height="24"/>
                                 <span class="ml-2">Configurações</span>
                             </a>

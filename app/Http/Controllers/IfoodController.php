@@ -26,7 +26,15 @@ class IfoodController extends Controller
 
                 $existingEvent = OrderEvent::where('event_id_external', $eventObject->id)->first();
 
-                if (!$existingEvent) {
+                if ($existingEvent) {
+                    $existingEvent->update([
+                        'code' => $eventObject->code,
+                        'full_code' => $eventObject->fullCode,
+                        'order_id' => $eventObject->orderId,
+                        'event_created_at' => Carbon::parse($eventObject->createdAt)->format('Y-m-d H:i:s'),
+                        'metadata' => $metadata,
+                    ]);
+                } else {
                     OrderEvent::create([
                         'event_id_external' => $eventObject->id,
                         'code' => $eventObject->code,

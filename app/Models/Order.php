@@ -47,4 +47,9 @@ class Order extends Model
     {
         return $this->hasOne(DeliveryAddress::class, 'order_id', 'id');
     }
+
+    public function orderEvents()
+    {
+        return $this->hasMany(OrderEvent::class, 'order_id', 'order_id_external');
+    }
 }
