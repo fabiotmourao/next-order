@@ -13,5 +13,10 @@ Route::any('/process-order-events', [IfoodController::class, 'processOrderEvents
 
 Route::get('/orders', [OrderDetailsController::class, 'index']);
 
+Route::get('/test', [OrderDetailsController::class, 'indexTeste']);
+
 Route::get('/configuracoes', [ConfiguracoesController::class, 'index']);
+
+Route::post('orders/{orderId}/confirm', [OrderDetailsController::class, 'confirmOrder'])->name('orders.confirm');
+
 

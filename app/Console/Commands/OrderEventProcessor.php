@@ -1,49 +1,67 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Console\Commands;
 
-use Illuminate\Http\Request;
-use App\Services\IfoodService;
+use Illuminate\Console\Command;
+
 use App\Models\OrderEvent;
+use Carbon\Carbon;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\DeliveryAddress;
 use App\Models\OrderItem;
-use Carbon\Carbon;
+use App\Services\IfoodService;
 
-class IfoodController extends Controller
+class OrderEventProcessor extends Command
 {
-    // vai ser um comando para novos pedidos e ser chamado em um agendador
-    public function processOrderEvents(IfoodService $ifoodService)
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'order:process-events';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'processa eventos do ifood salva/atualiza a cada 30s';
+
+    public function __construct(IfoodService $ifoodService)
+    {
+        parent::__construct();
+        $this->ifoodService = $ifoodService;
+    }
+    /**
+     * Execute the console command.
+     */
+
+    public function handle()
     {
         try {
-            $orderEvents = $ifoodService->getOrderEvents();
+            $orderEvents = $this->ifoodService->getOrderEvents();
 
             foreach ($orderEvents as $event) {
                 $eventObject = (object)$event;
 
                 $metadata = isset($eventObject->metadata) ? json_encode($eventObject->metadata) : null;
 
-                $existingEvent = OrderEvent::where('order_id', $eventObject->orderId)->first();
-
-                if ($existingEvent) {
-                    $existingEvent->update([
-                        'code' => $eventObject->code,
-                        'full_code' => $eventObject->fullCode,
-                        'event_created_at' => Carbon::parse($eventObject->createdAt)->format('Y-m-d H:i:s'),
-                        'metadata' => $metadata,
-                    ]);
-                } else {
-                    OrderEvent::create([
+                OrderEvent::updateOrCreate(
+                    [
+                        'order_id' => $eventObject->orderId,
+                    ],
+                    [
                         'order_id' => $eventObject->orderId,
                         'code' => $eventObject->code,
                         'full_code' => $eventObject->fullCode,
                         'event_created_at' => Carbon::parse($eventObject->createdAt)->format('Y-m-d H:i:s'),
                         'metadata' => $metadata,
-                    ]);
-                }
+                    ]
+                );
 
-                $orderData = $ifoodService->getOrderDetails($eventObject->orderId);
+
+                $orderData = $this->ifoodService->getOrderDetails($eventObject->orderId);
 
                 $customerData = (object)$orderData['customer'];
 
@@ -73,7 +91,7 @@ class IfoodController extends Controller
                         'order_created_at' => Carbon::parse($order->createdAt)->format('Y-m-d H:i:s'),
                         'preparation_start_date_time' => $order->preparationStartDateTime,
                         'is_test' => $order->isTest,
-                        'customer_id' => $customer->id, // aqui vem o customer_id do customer criado  a cima que vem da base de  dados
+                        'customer_id' => $customer->id,
                     ]
                 );
 
@@ -126,10 +144,9 @@ class IfoodController extends Controller
                     );
                 }
             }
-
-            return response()->json(['message' => 'Eventos do pedido processados com sucesso.'], 200);
+            $this->info('Eventos do pedido processados com sucesso.');
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            $this->error('Erro ao processar eventos do pedido: ' . $e->getMessage());
         }
     }
 }

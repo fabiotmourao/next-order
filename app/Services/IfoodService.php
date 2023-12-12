@@ -114,11 +114,28 @@ class IfoodService
             ]);
 
             return $response;
-
         } catch (\Exception $e) {
             logger('Error in acknowledgeOrderEvent: ' . $e->getMessage());
 
             throw new \Exception('Erro ao enviar acknowledgeOrderEvent: ' . $e->getMessage());
+        }
+    }
+
+    public function confirmOrder($orderId)
+    {
+        try {
+            $accessToken = $this->getAccessToken();
+
+            $response = $this->http->post("order/{$orderId}/confirm", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                ],
+            ]);
+            return $response;
+
+        } catch (\Exception $e) {
+            logger('Error in confirmOrder: ' . $e->getMessage());
+            return null;
         }
     }
 }

@@ -1,11 +1,15 @@
 <div class="offcanvas offcanvas-end" tabindex="-1" id="orderOffcanvas{{ $order->id }}"
-    aria-labelledby="orderOffcanvasLabel{{ $order->id }}" style="max-width: 945px; width: 75%;">
+    aria-labelledby="orderOffcanvasLabel{{ $order->id }}" style="max-width: 880px; width: 75%;">
     <div class="offcanvas-header">
         <h5 id="orderOffcanvasLabel{{ $order->id }}">Detalhes do Pedido</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-            aria-label="Close"></button>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
+        @if (session('status_'.$order->id))
+        <div class="alert alert-success">
+            {{ session('status_'.$order->id) }}
+        </div>
+    @endif
         <div class="container-fluid">
             <div class="row">
                 <div class="col-4">
@@ -14,7 +18,7 @@
                     <span class="font-weight-bold">Feito em</span>
                     <p>
                         {{ Carbon\Carbon::parse($order->order_created_at)->format('d/m/Y') }} as
-                        {{ Carbon\Carbon::parse($order->order_created_at)->format('H:i:s') }}
+                        {{ Carbon\Carbon::parse($order->order_created_at)->format('H:i') }}
                     </p>
                     <span class="font-weight-bold">Tipo de pedido: </span>
                     <p>{{ $order->order_type }}</p>
@@ -70,9 +74,9 @@
         </div>
     </div>
     <div class="offcanvas-footer d-flex justify-content-end mb-5">
-        <button type="button" class="btn btn-success ms-auto my-custom-button">Confirmar Pedido</button>
+        <form action="{{ route('orders.confirm', ['orderId' => $order->id]) }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-success ms-auto my-custom-button">Confirmar</button>
+        </form>
     </div>
-
-
-
 </div>
